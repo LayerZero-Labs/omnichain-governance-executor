@@ -65,6 +65,8 @@ For each remote chain do the following:
 
 When `Timelock` contract executes the proposal it calls `execute` function in `OmnichainProposalSender` which sends the proposal actions to the remote chain.
 
+<br>
+
 ## Retrying failed message on the source chain
 
 Sending a message might fail on the main chain the calling `execute`. The most common reason for this is insufficient fees supplied.
