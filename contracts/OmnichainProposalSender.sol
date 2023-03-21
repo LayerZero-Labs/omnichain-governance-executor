@@ -61,11 +61,8 @@ contract OmnichainProposalSender is Ownable, ReentrancyGuard {
         try lzEndpoint.send{value: msg.value}(remoteChainId, trustedRemote, payload, payable(tx.origin), address(0), adapterParams){
             emit ExecuteRemoteProposal(remoteChainId, payload);  
         } catch (bytes memory reason) {
-            // refunds the transaction sender
-            payable(tx.origin).transfer(msg.value);
-
             uint64 _lastStoredPayloadNonce = ++lastStoredPayloadNonce;
-            bytes memory execution = abi.encode(remoteChainId, payload, adapterParams);
+            bytes memory execution = abi.encode(remoteChainId, payload, adapterParams, msg.value);
             storedExecutionHashes[_lastStoredPayloadNonce] = keccak256(execution);
             emit StorePayload(_lastStoredPayloadNonce, remoteChainId, payload, adapterParams, msg.value, reason);
         }
@@ -77,16 +74,17 @@ contract OmnichainProposalSender is Ownable, ReentrancyGuard {
     /// @param remoteChainId The LayerZero id of the remote chain
     /// @param payload The payload to be sent to the remote chain. It's computed as follows payload = abi.encode(targets, values, signatures, calldatas)
     /// @param adapterParams The params used to specify the custom amount of gas required for the execution on the destination
-    function retryExecute(uint64 nonce, uint16 remoteChainId, bytes calldata payload, bytes calldata adapterParams) external payable nonReentrant {
+    /// @param originalValue The msg.value passed when execute() function was called
+    function retryExecute(uint64 nonce, uint16 remoteChainId, bytes calldata payload, bytes calldata adapterParams, uint originalValue) external payable nonReentrant {
         bytes32 hash = storedExecutionHashes[nonce];
         require(hash != bytes32(0), "OmnichainProposalSender: no stored payload");
 
-        bytes memory execution = abi.encode(remoteChainId, payload, adapterParams);
+        bytes memory execution = abi.encode(remoteChainId, payload, adapterParams, originalValue);
         require(keccak256(execution) == hash, "OmnichainProposalSender: invalid execution params");
 
         delete storedExecutionHashes[nonce];
 
-        lzEndpoint.send{value: msg.value}(remoteChainId, trustedRemoteLookup[remoteChainId], payload, payable(msg.sender), address(0), adapterParams);
+        lzEndpoint.send{value: originalValue + msg.value}(remoteChainId, trustedRemoteLookup[remoteChainId], payload, payable(msg.sender), address(0), adapterParams);
         emit ClearPayload(nonce, hash);
     }
 
