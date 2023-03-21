@@ -28,18 +28,18 @@ contract OmnichainProposalSender is Ownable, ReentrancyGuard {
     event ExecuteRemoteProposal(uint16 indexed remoteChainId, bytes payload);
 
     /// @notice Emitted when a previously failed message successfully sent to the remote chain
-    event ClearPayload(uint64 nonce, bytes32 executionHash);
+    event ClearPayload(uint64 indexed nonce, bytes32 executionHash);
 
     /// @notice Emitted when an execution hash of a failed message saved
-    event StorePayload(uint64 nonce, uint16 remoteChainId, bytes payload, bytes adapterParams, uint value, bytes reason);
+    event StorePayload(uint64 indexed nonce, uint16 indexed remoteChainId, bytes payload, bytes adapterParams, uint value, bytes reason);
 
-    constructor(address _lzEndpoint) {
-        require(_lzEndpoint != address(0), "OmnichainProposalSender: invalid endpoint");
-        lzEndpoint = ILayerZeroEndpoint(_lzEndpoint);
+    constructor(ILayerZeroEndpoint _lzEndpoint) {
+        require(address(_lzEndpoint) != address(0), "OmnichainProposalSender: invalid endpoint");
+        lzEndpoint = _lzEndpoint;
     }
 
     /// @notice Estimates LayerZero fees for cross-chain message delivery to the remote chain
-    /// @dev The estimated fees the are the min required, it's recommended to increase the fees amount when sending a message. The unused amount will be refunded
+    /// @dev The estimated fees are the minimum required, it's recommended to increase the fees amount when sending a message. The unused amount will be refunded
     /// @param remoteChainId The LayerZero id of a remote chain
     /// @param payload The payload to be sent to the remote chain. It's computed as follows payload = abi.encode(targets, values, signatures, calldatas)
     /// @param adapterParams The params used to specify the custom amount of gas required for the execution on the destination
@@ -64,9 +64,10 @@ contract OmnichainProposalSender is Ownable, ReentrancyGuard {
             // refunds the transaction sender
             payable(tx.origin).transfer(msg.value);
 
+            uint64 _lastStoredPayloadNonce = ++lastStoredPayloadNonce;
             bytes memory execution = abi.encode(remoteChainId, payload, adapterParams);
-            storedExecutionHashes[++lastStoredPayloadNonce] = keccak256(execution);
-            emit StorePayload(lastStoredPayloadNonce, remoteChainId, payload, adapterParams, msg.value, reason);
+            storedExecutionHashes[_lastStoredPayloadNonce] = keccak256(execution);
+            emit StorePayload(_lastStoredPayloadNonce, remoteChainId, payload, adapterParams, msg.value, reason);
         }
     }
 
@@ -114,8 +115,8 @@ contract OmnichainProposalSender is Ownable, ReentrancyGuard {
 
     /// @notice Gets the configuration of the LayerZero messaging library of the specified version
     /// @param version Messaging library version
-    /// @param chainId The LayerZero chainId for the pending config change
-    /// @param configType Type of configuration. every messaging library has its own convention.
+    /// @param chainId The LayerZero chainId
+    /// @param configType Type of configuration. Every messaging library has its own convention.
     function getConfig(uint16 version, uint16 chainId, uint configType) external view returns (bytes memory) {
         return lzEndpoint.getConfig(version, chainId, address(this), configType);
     }

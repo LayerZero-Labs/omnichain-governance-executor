@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@layerzerolabs/solidity-examples/contracts/lzApp/NonblockingLzApp.sol";
 
 /// @title Omnichain Governance Executor
 /// @notice Executes the proposal transactions sent from the main chain
 /// @dev The owner of this contract controls LayerZero configuration. When used in production the owner should be set to a Timelock or this contract itself 
 /// This implementation is non-blocking meaning the failed messages will not block the future messages from the source. For the blocking behavior derive the contract from LzApp
-contract OmnichainGovernanceExecutor is NonblockingLzApp {
+contract OmnichainGovernanceExecutor is NonblockingLzApp, ReentrancyGuard {
     using BytesLib for bytes;
 
     event ProposalExecuted(bytes payload);
@@ -25,7 +26,7 @@ contract OmnichainGovernanceExecutor is NonblockingLzApp {
         emit ProposalExecuted(_payload);
     }
 
-    function _executeTransaction(address target, uint value, string memory signature, bytes memory data) private {
+    function _executeTransaction(address target, uint value, string memory signature, bytes memory data) private nonReentrant {
         bytes memory callData = bytes(signature).length == 0 ? data : abi.encodePacked(bytes4(keccak256(bytes(signature))), data);
 
         // solium-disable-next-line security/no-call-value
