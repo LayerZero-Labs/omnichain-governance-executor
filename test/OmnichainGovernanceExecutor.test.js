@@ -98,7 +98,7 @@ describe("OmnichainGovernanceExecution", () => {
                 await governorBravo.execute(proposalId)
                 const nonce = await proposalSender.lastStoredPayloadNonce()
 
-                await proposalSender.retryExecute(nonce, remoteExecutorChainId, payload, adapterParams, { value: fee.nativeFee })
+                await proposalSender.retryExecute(nonce, remoteExecutorChainId, payload, adapterParams, values[0], { value: fee.nativeFee })
                 expect((await remoteExecutorTarget.fee()).toNumber()).to.eq(remoteExecutorTargetFee)
             })
         })
