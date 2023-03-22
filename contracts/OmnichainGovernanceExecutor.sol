@@ -20,7 +20,7 @@ contract OmnichainGovernanceExecutor is NonblockingLzApp, ReentrancyGuard {
     // overriding the virtual function in LzReceiver
     function _blockingLzReceive(uint16 _srcChainId, bytes memory _srcAddress, uint64 _nonce, bytes memory _payload) internal virtual override {
         bytes32 hashedPayload = keccak256(_payload);
-        uint256 gasToStoreAndEmit = 50000; // enough gas to ensure we can store the payload and emit the event
+        uint256 gasToStoreAndEmit = 30000; // enough gas to ensure we can store the payload and emit the event
 
         (bool success, bytes memory reason) = address(this).excessivelySafeCall(gasleft() - gasToStoreAndEmit, 150, abi.encodeWithSelector(this.nonblockingLzReceive.selector, _srcChainId, _srcAddress, _nonce, _payload));
         // try-catch all errors/exceptions
