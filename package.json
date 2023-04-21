@@ -16,26 +16,24 @@
     "lint": "yarn prettier && solhint 'contracts/*.sol' && solhint 'contracts/**/*.sol'"
   },
   "dependencies": {
-    "@layerzerolabs/solidity-examples": "0.0.4",
+    "@layerzerolabs/solidity-examples": "0.0.8",
     "@openzeppelin/contracts": "^4.4.1",
-    "@openzeppelin/hardhat-upgrades": "^1.18.3"
+    "@layerzerolabs/lz-sdk": "^0.0.11"
   },
   "devDependencies": {
-    "@ethersproject/hardware-wallets": "^5.7.0",
     "@layerzerolabs/prettier-plugin-solidity": "^1.0.0-beta.19",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.6",
     "@nomiclabs/hardhat-ethers": "^2.0.3",
-    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@nomiclabs/hardhat-etherscan": "^3.1.0",
     "chai": "^4.3.4",
     "dotenv": "^10.0.0",
     "eslint": "^7.0.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.1",
-    "ethereum-waffle": "^3.4.0",
     "ethers": "^5.5.2",
     "hardhat": "^2.12.2",
     "hardhat-contract-sizer": "^2.1.1",
-    "hardhat-deploy": "^0.10.5",
+    "hardhat-deploy": "^0.11.25",
     "hardhat-deploy-ethers": "^0.3.0-beta.13",
     "hardhat-gas-reporter": "^1.0.6",
     "prettier": "^2.4.1",

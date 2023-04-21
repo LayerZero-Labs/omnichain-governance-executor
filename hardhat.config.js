@@ -1,23 +1,9 @@
 require("dotenv").config();
-
-require('hardhat-contract-sizer');
-require("@nomiclabs/hardhat-waffle");
 require("solidity-coverage");
-require('hardhat-gas-reporter');
 require('hardhat-deploy');
 require('hardhat-deploy-ethers');
-require('@openzeppelin/hardhat-upgrades');
+require("@nomiclabs/hardhat-etherscan");
 require('./tasks');
-
-// This is a sample Hardhat task. To learn how to create your own go to
-// https://hardhat.org/guides/create-task.html
-task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
-  const accounts = await hre.ethers.getSigners();
-
-  for (const account of accounts) {
-    console.log(account.address);
-  }
-});
 
 function getMnemonic(networkName) {
   if (networkName) {
@@ -60,14 +46,6 @@ module.exports = {
       }
     ]
   },
-
-  // solidity: "0.8.4",
-  contractSizer: {
-    alphaSort: false,
-    runOnCompile: true,
-    disambiguatePaths: false,
-  },
-
   namedAccounts: {
     deployer: {
       default: 0,    // wallet address 0, of the mnemonic in .env
