@@ -75,10 +75,11 @@ To retry a failed message do the following:
 2. If the reason indicates insufficient fees, call `estimateFees` again
 3. Call `retryExecute` in `OmnichainProposalSender` supplying the parameters from the event and the fees obtained in the previous step
 
+<br>
 
 ## Deployed contracts for Uniswap Governance
 
 | Chain     | Contract                     | Address                                                                                                                |
 | --------- | ---------------------------- |------------------------------------------------------------------------------------------------------------------------|
-| Ethereum  | `OmnichainProposalSender`    | [`0xeb0BCF27D1Fb4b25e708fBB815c421Aeb51eA9fc`](https://etherscan.io/address/0xeb0BCF27D1Fb4b25e708fBB815c421Aeb51eA9fc)| 
-| Avalanche | `OmnichainGovernanceExecutor`| [`0xeb0BCF27D1Fb4b25e708fBB815c421Aeb51eA9fc`](https://snowtrace.io/address/0xeb0BCF27D1Fb4b25e708fBB815c421Aeb51eA9fc)|
+| Ethereum  | OmnichainProposalSender      | [0xeb0BCF27D1Fb4b25e708fBB815c421Aeb51eA9fc](https://etherscan.io/address/0xeb0BCF27D1Fb4b25e708fBB815c421Aeb51eA9fc)| 
+| Avalanche | OmnichainGovernanceExecutor  | [0xeb0BCF27D1Fb4b25e708fBB815c421Aeb51eA9fc](https://snowtrace.io/address/0xeb0BCF27D1Fb4b25e708fBB815c421Aeb51eA9fc)|
