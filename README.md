@@ -54,11 +54,11 @@ Get the coverage report.
 ## Creating remote proposal
 
 For each remote chain do the following:
-1. Encode the proposal actions that needs to be executed as follows `payload = abi.encode(targets, values, signatures, calldatas)`
-2. Call `estimateFees` in `OmnichainProposalSender` passing the remote chain id, the payload constructed in the previous step and adapter parameters. Adapter parameters allows specifying the amount of gas required on destination to execute the proposal. We recommend testing the execution logic on the destination chain to determine the required amount. To learn more about adapter parameters refer to [LayerZero gitbook](https://layerzero.gitbook.io/docs/evm-guides/advanced/relayer-adapter-parameters)
+1. Encode the proposal actions that need to be executed as follows `payload = abi.encode(targets, values, signatures, calldatas)`
+2. Call `estimateFees` in `OmnichainProposalSender` passing the remote chain id, the payload constructed in the previous step and adapter parameters. Adapter parameters allow specifying the amount of gas required on destination to execute the proposal. We recommend testing the execution logic on the destination chain to determine the required amount. To learn more about adapter parameters refer to [LayerZero gitbook](https://layerzero.gitbook.io/docs/evm-guides/advanced/relayer-adapter-parameters)
 3. Create a proposal action as follows:
 - `target` an address of `OmnichainProposalSender` contract
-- `value` LayerZero fee for message delivery. Generally it should be equal to `nativeFee` obtained in the previous step by calling `estimateFees`. However, since there is a significant time period between the proposal creation and execution, the fees estimation might be inaccurate and we're highly recommend increasing the amount of fees passed (e.g., `nativeFee.mul(2)`). Unused amount will be refunded to the address that initiated the proposal execution on the main chain (`tx.origin`)
+- `value` LayerZero fee for message delivery. Generally it should be equal to `nativeFee` obtained in the previous step by calling `estimateFees`. However, since there is a significant time period between the proposal creation and execution, the fees estimation might be inaccurate and we highly recommend increasing the amount of fees passed (e.g., `nativeFee.mul(2)`). Unused amount will be refunded to the address that initiated the proposal execution on the main chain (`tx.origin`)
 - `signature` the signature of `execute` function in `OmnichainProposalSender` contract (`"execute(uint16,bytes,bytes)"`)
 - `calldata` the encoded parameters of `execute` function in `OmnichainProposalSender`  (`abi.encode(remoteExecutorChainId, payload, adapterParams)`)
 4. Pass the values as part of the corresponding arrays in `propose` function of `GovernorBravoDelegate` contract
